@@ -13,6 +13,7 @@ import os
 import time
 from functools import partial
 from typing import Any, TypedDict
+from .state import AgentState, _cost
 from .systems import KNOWN_SYSTEMS, _extract_system_name, _mentioned_systems, _split_systems
 
 
@@ -22,30 +23,6 @@ from langsmith import traceable
 
 from .deps import SupervisorDeps
 from .retry import with_retry
-
-class AgentState(TypedDict, total=False):
-    query: str
-    thread_id: str
-    history: list[dict]
-    route: str
-    needs_analysis: bool
-    tasks: list[dict]
-    gate_removed: int
-    collected: list[dict]
-    replan_rounds: int
-    retry_count: int
-    parallel_elapsed: float
-    draft: str
-    validation_attempts: int
-    validation_feedback: str
-    final: str
-    last_prompt: str
-    cost_usd: float
-    events: list[dict]
-
-
-def _cost(state: AgentState, usage: dict) -> float:
-    return round(state.get("cost_usd", 0.0) + usage["usd"], 6)
 
 
 @traceable(name="route_node")
