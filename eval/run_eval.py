@@ -27,6 +27,7 @@ sys.path.insert(0, str(ROOT))
 os.chdir(ROOT)
 
 from agent import graph                                  # noqa: E402
+from agent.nodes import replan                           # noqa: E402
 from agent.deps import SupervisorDeps                    # noqa: E402
 from agent.mcp_client import MCPClient                   # noqa: E402
 from agent.ollama_llm import OllamaFastLLM               # noqa: E402
@@ -56,7 +57,7 @@ async def run_query(item: dict, deps_rules, deps_rag) -> dict:
 
     modes = {}
     for m in MODES:
-        graph.RAG_INPUT = RAG_INPUT_OF[m]
+        replan.RAG_INPUT = RAG_INPUT_OF[m]
         deps = deps_rules if m == "rules" else deps_rag
         out = await graph.replan_check_node(dict(state), deps=deps)
         ev = out["events"][-1]

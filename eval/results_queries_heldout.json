@@ -14,22 +14,22 @@
       "rules": {
         "target": "memory-leak",
         "score": null,
-        "select_ms": 0.0
+        "select_ms": 0.1
       },
       "rag_query": {
         "target": "memory-leak",
         "score": 0.613,
-        "select_ms": 45.8
+        "select_ms": 97.5
       },
       "rag_alerts": {
         "target": "memory-leak",
         "score": 0.613,
-        "select_ms": 32.3
+        "select_ms": 43.8
       },
       "rag_auto": {
         "target": "memory-leak",
         "score": 0.613,
-        "select_ms": 31.3
+        "select_ms": 35.3
       }
     }
   },
@@ -53,17 +53,17 @@
       "rag_query": {
         "target": "disk-full",
         "score": 0.556,
-        "select_ms": 62.6
+        "select_ms": 49.0
       },
       "rag_alerts": {
         "target": "disk-full",
         "score": 0.582,
-        "select_ms": 37.1
+        "select_ms": 33.0
       },
       "rag_auto": {
         "target": "disk-full",
         "score": 0.582,
-        "select_ms": 32.1
+        "select_ms": 32.7
       }
     }
   },
@@ -87,17 +87,17 @@
       "rag_query": {
         "target": "cpu-spike",
         "score": 0.628,
-        "select_ms": 64.5
+        "select_ms": 66.7
       },
       "rag_alerts": {
         "target": "cpu-spike",
         "score": 0.61,
-        "select_ms": 35.4
+        "select_ms": 37.1
       },
       "rag_auto": {
         "target": "cpu-spike",
         "score": 0.61,
-        "select_ms": 32.8
+        "select_ms": 33.6
       }
     }
   },
@@ -121,17 +121,17 @@
       "rag_query": {
         "target": "queue-backlog",
         "score": 0.523,
-        "select_ms": 60.9
+        "select_ms": 53.0
       },
       "rag_alerts": {
         "target": "network-timeout",
         "score": 0.551,
-        "select_ms": 37.9
+        "select_ms": 35.4
       },
       "rag_auto": {
         "target": "network-timeout",
         "score": 0.551,
-        "select_ms": 34.0
+        "select_ms": 34.4
       }
     }
   },
@@ -155,17 +155,17 @@
       "rag_query": {
         "target": "network-timeout",
         "score": 0.539,
-        "select_ms": 64.8
+        "select_ms": 66.6
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.56,
-        "select_ms": 37.4
+        "select_ms": 36.2
       },
       "rag_auto": {
         "target": "high-latency",
         "score": 0.56,
-        "select_ms": 33.5
+        "select_ms": 40.8
       }
     }
   },
@@ -189,17 +189,17 @@
       "rag_query": {
         "target": "queue-backlog",
         "score": 0.624,
-        "select_ms": 63.2
+        "select_ms": 52.1
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.672,
-        "select_ms": 36.5
+        "select_ms": 43.3
       },
       "rag_auto": {
         "target": "high-latency",
         "score": 0.672,
-        "select_ms": 32.8
+        "select_ms": 40.5
       }
     }
   },
@@ -224,17 +224,17 @@
       "rag_query": {
         "target": "queue-backlog",
         "score": 0.589,
-        "select_ms": 68.2
+        "select_ms": 55.9
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.69,
-        "select_ms": 38.2
+        "select_ms": 38.0
       },
       "rag_auto": {
         "target": "queue-backlog",
         "score": 0.589,
-        "select_ms": 32.1
+        "select_ms": 37.5
       }
     }
   },
@@ -258,17 +258,17 @@
       "rag_query": {
         "target": "memory-leak",
         "score": 0.55,
-        "select_ms": 55.0
+        "select_ms": 62.3
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.651,
-        "select_ms": 40.7
+        "select_ms": 36.9
       },
       "rag_auto": {
         "target": "memory-leak",
         "score": 0.55,
-        "select_ms": 31.7
+        "select_ms": 36.5
       }
     }
   },
@@ -297,12 +297,12 @@
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.656,
-        "select_ms": 36.5
+        "select_ms": 39.7
       },
       "rag_auto": {
         "target": "disk-full",
         "score": 0.668,
-        "select_ms": 32.6
+        "select_ms": 34.9
       }
     }
   },
@@ -326,17 +326,17 @@
       "rag_query": {
         "target": "db-down",
         "score": 0.599,
-        "select_ms": 66.3
+        "select_ms": 66.9
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.655,
-        "select_ms": 35.6
+        "select_ms": 41.5
       },
       "rag_auto": {
         "target": "db-down",
         "score": 0.599,
-        "select_ms": 32.7
+        "select_ms": 38.3
       }
     }
   },
@@ -360,17 +360,17 @@
       "rag_query": {
         "target": "ssl-cert-expiry",
         "score": 0.714,
-        "select_ms": 78.6
+        "select_ms": 68.4
       },
       "rag_alerts": {
         "target": "ssl-cert-expiry",
         "score": 0.647,
-        "select_ms": 36.9
+        "select_ms": 38.0
       },
       "rag_auto": {
         "target": "ssl-cert-expiry",
         "score": 0.714,
-        "select_ms": 32.2
+        "select_ms": 33.5
       }
     }
   },
@@ -394,17 +394,17 @@
       "rag_query": {
         "target": "queue-backlog",
         "score": 0.642,
-        "select_ms": 65.8
+        "select_ms": 53.8
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.683,
-        "select_ms": 37.1
+        "select_ms": 36.7
       },
       "rag_auto": {
         "target": "queue-backlog",
         "score": 0.642,
-        "select_ms": 33.5
+        "select_ms": 42.6
       }
     }
   },
@@ -428,17 +428,17 @@
       "rag_query": {
         "target": "bad-deploy",
         "score": 0.625,
-        "select_ms": 58.8
+        "select_ms": 58.9
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.65,
-        "select_ms": 35.2
+        "select_ms": 39.4
       },
       "rag_auto": {
         "target": "bad-deploy",
         "score": 0.625,
-        "select_ms": 32.3
+        "select_ms": 41.0
       }
     }
   },
@@ -462,17 +462,17 @@
       "rag_query": {
         "target": "auth-failure",
         "score": 0.686,
-        "select_ms": 66.4
+        "select_ms": 51.0
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.637,
-        "select_ms": 91.1
+        "select_ms": 36.5
       },
       "rag_auto": {
         "target": "auth-failure",
         "score": 0.686,
-        "select_ms": 31.9
+        "select_ms": 32.8
       }
     }
   },
@@ -558,17 +558,17 @@
       "rag_query": {
         "target": "queue-backlog",
         "score": 0.442,
-        "select_ms": 67.5
+        "select_ms": 57.8
       },
       "rag_alerts": {
         "target": "memory-leak",
         "score": 0.528,
-        "select_ms": 37.0
+        "select_ms": 34.1
       },
       "rag_auto": {
         "target": "memory-leak",
         "score": 0.528,
-        "select_ms": 32.9
+        "select_ms": 31.5
       }
     }
   },
@@ -593,17 +593,17 @@
       "rag_query": {
         "target": "queue-backlog",
         "score": 0.483,
-        "select_ms": 80.4
+        "select_ms": 62.8
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.645,
-        "select_ms": 32.4
+        "select_ms": 36.7
       },
       "rag_auto": {
         "target": "queue-backlog",
         "score": 0.483,
-        "select_ms": 31.4
+        "select_ms": 35.7
       }
     }
   },
@@ -628,17 +628,17 @@
       "rag_query": {
         "target": "queue-backlog",
         "score": 0.455,
-        "select_ms": 68.1
+        "select_ms": 56.1
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.622,
-        "select_ms": 36.7
+        "select_ms": 46.0
       },
       "rag_auto": {
         "target": "queue-backlog",
         "score": 0.455,
-        "select_ms": 34.8
+        "select_ms": 33.7
       }
     }
   },
@@ -663,17 +663,17 @@
       "rag_query": {
         "target": "cpu-spike",
         "score": 0.509,
-        "select_ms": 67.5
+        "select_ms": 61.7
       },
       "rag_alerts": {
         "target": "high-latency",
         "score": 0.648,
-        "select_ms": 36.2
+        "select_ms": 39.2
       },
       "rag_auto": {
         "target": "cpu-spike",
         "score": 0.509,
-        "select_ms": 32.0
+        "select_ms": 37.1
       }
     }
   }
