@@ -17,6 +17,10 @@ from .state import AgentState, _cost
 from .systems import KNOWN_SYSTEMS, _extract_system_name, _mentioned_systems, _split_systems
 from .nodes.routing import _after_route, chat_answer_node, route_node, unknown_system_node
 from .nodes.planning import plan_node, gate_node
+from .nodes.research import research_node
+from .nodes.replan import _after_replan_check, replan_check_node
+
+
 
 
 
@@ -26,144 +30,6 @@ from langsmith import traceable
 
 from .deps import SupervisorDeps
 from .retry import with_retry
-
-@traceable(name="research_node")
-async def research_node(state: AgentState, deps: SupervisorDeps) -> dict:
-    """Wave 15 가드 + Wave 10b 병렬 + Wave 9 재시도 + Wave 2 Tool/Resource 실호출."""
-    tasks = state["tasks"]
-    research_indices = [i for i, t in enumerate(tasks)
-                        if t["agent"] == "research" and t["status"] == "pending"]
-    # Wave 15 — 객체가 아니라 '실행할 목록'을 검사한다 (not research_agent 버그의 수정판)
-    if not research_indices:
-        return {"events": state["events"] +
-                [{"type": "ResearchSkipped", "reason": "pending research task 0개"}]}
-
-    retry_total = state.get("retry_count", 0)
-
-    # URI를 코드에 하드코딩하지 않는다. 여러 MCP 서버가 연결돼 있고 그중 어느 서버가
-    # "get_incident_runbook" resource를 제공하는지 모른다고 가정하고, 먼저 연결된
-    # 서버들을 조회(list)해 유효한 서버를 찾은 뒤에만 그 서버로 요청한다.
-    needs_runbook = any(tasks[i]["kind"] != "monitoring" for i in research_indices)
-    runbook_server = runbook_uri_template = None
-    if needs_runbook:
-        runbook_server, runbook_uri_template = await deps.mcp.find_resource_template(
-            "get_incident_runbook")
-
-    async def run_one(idx: int) -> dict:
-        task = tasks[idx]
-        await asyncio.sleep(0.35)   # 태스크당 고정 지연 — 병렬 효과를 실측하기 위함
-        if task["kind"] == "monitoring":
-            data, retries = await with_retry(
-                deps.mcp.call_tool, "get_monitoring_status",
-                {"system_name": task["target"]})
-            return {"idx": idx, "source": "monitoring", "data": data, "retries": retries}
-        uri = runbook_uri_template.format(incident_type=task["target"])
-        data = await deps.mcp.read_resource(uri, server=runbook_server)
-        return {"idx": idx, "source": "runbook", "data": data, "retries": 0}
-
-    started = time.perf_counter()
-    results = await asyncio.gather(*(run_one(i) for i in research_indices))
-    elapsed = round(time.perf_counter() - started, 2)
-
-    new_tasks = [dict(t) for t in tasks]
-    collected = list(state.get("collected", []))
-    events = list(state["events"])
-    for r in results:
-        new_tasks[r["idx"]]["status"] = "done"
-        collected.append({"source": r["source"], "data": r["data"]})
-        retry_total += r["retries"]
-        events.append({"type": "TaskCompleted", "id": new_tasks[r["idx"]]["id"],
-                       "source": r["source"], "target": new_tasks[r["idx"]]["target"],
-                       "retries": r["retries"]})
-    return {"tasks": new_tasks, "collected": collected, "retry_count": retry_total,
-            "parallel_elapsed": elapsed, "events": events}
-
-
-# 수집된 모니터링 결과(상태·알림 문구)를 보고 어떤 runbook이 맞는지 고른다. LLM에게
-# 다시 묻는 대신 코드 레벨 규칙으로 판단한다 — gate(Wave 6)·replan(Wave 7)과 같은 설계
-# 원칙: 모델의 판단을 그대로 믿지 않고, 실측 데이터로 검증 가능한 결정은 코드가 내린다.
-_INCIDENT_TYPE_RULES = [
-    ("latency", "high-latency"),
-    ("pool", "high-latency"),
-    ("cpu", "cpu-spike"),
-    ("memory", "memory-leak"),
-    ("heap", "memory-leak"),
-    ("timeout", "network-timeout"),
-    ("network", "network-timeout"),
-    ("disk", "disk-full"),
-    ("down", "db-down"),
-]
-
-
-def _classify_incident_type(collected: list[dict]) -> str:
-    text = " ".join(
-        f"{c['data'].get('status', '')} " + " ".join(c["data"].get("alerts", []))
-        for c in collected if c.get("source") == "monitoring"
-    ).lower()
-    for keyword, incident_type in _INCIDENT_TYPE_RULES:
-        if keyword in text:
-            return incident_type
-    return "db-down"   # 매칭되는 증상이 없으면 가장 일반적인 장애 대응 절차로 폴백
-
-
-# 개선 1 — RAG 검색 입력 (eval/run_eval.py 23문항 비교 결과로 기본값 결정).
-#   'auto'(기본)    : 질문에 아는 시스템이 명시된 때만 질문 + 그 시스템의 알림, 아니면 질문만 (19/23)
-#   'query'         : 질문만 (17/23)
-#   'query+alerts'  : 항상 질문 + 알림 (14/23) — 시스템을 안 밝힌 질문에서 기본 조회 대상
-#                     (auth-service)의 알림이 검색을 high-latency 쪽으로 오염시킴
-RAG_INPUT = os.environ.get("RAG_INPUT", "auto")
-
-
-def _search_text(state: AgentState) -> str:
-    if RAG_INPUT == "query":
-        return state["query"]
-    if RAG_INPUT == "auto":   # 질문에 아는 시스템이 명시된 경우에만 그 시스템의 알림을 함께 검색
-        known, _ = _split_systems(state["query"])
-        if not known:   # 시스템을 안 밝혔다면 기본 조회 대상(auth-service)의 알림이 검색을 오염시킴
-            return state["query"]
-    monitoring = " ".join(
-        f"{c['data'].get('status', '')} " + " ".join(c["data"].get("alerts", []))
-        for c in state.get("collected", []) if c.get("source") == "monitoring")
-    return f"{state['query']} {monitoring}".strip()
-
-
-@traceable(name="replan_check_node")
-async def replan_check_node(state: AgentState, deps: SupervisorDeps) -> dict:
-    """Wave 7 — 1차 수집 결과 평가. runbook이 없으면 gap task만 추가해 재조사.
-
-    개선 1 — 어떤 runbook을 가져올지를 키워드 규칙 대신 의미 검색(RAG)으로 고른다.
-    deps.retriever가 None이면(CLASSIFIER=rules) 기존 키워드 규칙으로 동작한다.
-    select_ms — runbook 선택에 걸린 시간(밀리초). 규칙/RAG 비용 비교용."""
-    has_runbook = any(c["source"] == "runbook" for c in state.get("collected", []))
-    rounds = state.get("replan_rounds", 0)
-    if has_runbook or rounds >= 1:
-        verdict = {"type": "ReplanCheck", "round": rounds, "is_sufficient": True}
-        return {"events": state["events"] + [verdict]}
-
-    started = time.perf_counter()   # 선택 시간 측정 시작
-    if deps.retriever is not None:
-        match = await deps.retriever.search(_search_text(state))
-        incident_type, score, method = match["incident_type"], match["score"], "rag"
-    else:
-        incident_type = _classify_incident_type(state.get("collected", []))
-        score, method = None, "rules"
-    select_ms = round((time.perf_counter() - started) * 1000, 1)
-
-    if incident_type is None:   # 임계값 미만 — 맞는 runbook이 없다. 억지로 고르지 않는다
-        verdict = {"type": "ReplanCheck", "round": rounds, "is_sufficient": True,
-                   "method": method, "score": score, "matched": None,
-                   "select_ms": select_ms}
-        return {"events": state["events"] + [verdict]}
-
-    gap_task = {"id": "task-gap-runbook", "agent": "research", "kind": "runbook",
-                "target": incident_type, "status": "pending"}
-    verdict = {"type": "ReplanCheck", "round": rounds, "is_sufficient": False,
-               "gap_task": gap_task["id"], "target": incident_type,
-               "method": method, "score": score, "select_ms": select_ms}
-    return {"tasks": state["tasks"] + [gap_task], "replan_rounds": rounds + 1,
-            "events": state["events"] + [verdict]}
-
-
 
 
 @traceable(name="analysis_node")
@@ -234,10 +100,6 @@ async def finalize_node(state: AgentState, deps: SupervisorDeps) -> dict:
         final += "\n\n※ 질문과 일치하는 대응 매뉴얼을 찾지 못해, 조회된 수치만으로 안내했습니다."
     return {"final": final,
             "events": state["events"] + [{"type": "Finalize", "pipeline": "incident-v2"}]}
-
-def _after_replan_check(state: AgentState) -> str:
-    last = state["events"][-1]
-    return "analysis" if last.get("is_sufficient") else "research"
 
 
 def _after_validate(state: AgentState) -> str:

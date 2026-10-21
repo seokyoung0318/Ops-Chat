@@ -4,8 +4,8 @@
 """
 import asyncio
 
-from agent import graph
 from agent.graph import finalize_node, unknown_system_node
+from agent.nodes import replan
 
 
 def run(node, state):
@@ -71,29 +71,29 @@ MONITORING = [{"source": "monitoring",
 
 # 'query' 방식은 알림을 섞지 않고 질문만 쓴다
 def test_search_text_query_mode_uses_question_only(monkeypatch):
-    monkeypatch.setattr(graph, "RAG_INPUT", "query")
+    monkeypatch.setattr(replan, "RAG_INPUT", "query")
     state = {"query": "web-01 CPU 급증", "collected": MONITORING}
-    assert graph._search_text(state) == "web-01 CPU 급증"
+    assert replan._search_text(state) == "web-01 CPU 급증"
 
 
 # 'query+alerts' 방식은 항상 알림을 함께 쓴다
 def test_search_text_query_plus_alerts_mode_always_adds_alerts(monkeypatch):
-    monkeypatch.setattr(graph, "RAG_INPUT", "query+alerts")
+    monkeypatch.setattr(replan, "RAG_INPUT", "query+alerts")
     state = {"query": "인증서가 만료됐다는 경고", "collected": MONITORING}
-    text = graph._search_text(state)
+    text = replan._search_text(state)
     assert "인증서가 만료됐다는 경고" in text
     assert "p95 latency 2.4s" in text
 
 
 # 'auto' 방식: 질문에 아는 시스템이 있으면 그 알림을 함께 쓴다
 def test_search_text_auto_adds_alerts_when_known_system_named(monkeypatch):
-    monkeypatch.setattr(graph, "RAG_INPUT", "auto")
+    monkeypatch.setattr(replan, "RAG_INPUT", "auto")
     state = {"query": "auth-service 응답이 느려요", "collected": MONITORING}
-    assert "p95 latency 2.4s" in graph._search_text(state)
+    assert "p95 latency 2.4s" in replan._search_text(state)
 
 
 # 'auto' 방식: 시스템을 안 밝혔으면 (기본 조회 대상의 알림이 검색을 오염시키므로) 질문만 쓴다
 def test_search_text_auto_uses_question_only_when_no_system_named(monkeypatch):
-    monkeypatch.setattr(graph, "RAG_INPUT", "auto")
+    monkeypatch.setattr(replan, "RAG_INPUT", "auto")
     state = {"query": "인증서가 만료됐다는 경고", "collected": MONITORING}
-    assert graph._search_text(state) == "인증서가 만료됐다는 경고"
+    assert replan._search_text(state) == "인증서가 만료됐다는 경고"
