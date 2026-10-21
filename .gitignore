@@ -1,0 +1,8 @@
+.env
+.venv/
+session.db
+__pycache__/
+*.log
+.DS_Store
+.pytest_cache/
+*.bak

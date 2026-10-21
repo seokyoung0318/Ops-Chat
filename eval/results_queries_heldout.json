@@ -1,0 +1,680 @@
+[
+  {
+    "id": 101,
+    "group": "시스템 명시",
+    "query": "cache-service 메모리 누수 같아요, 계속 늘어나요",
+    "expect": [
+      "memory-leak"
+    ],
+    "path": "plan",
+    "systems": [
+      "cache-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "memory-leak",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "memory-leak",
+        "score": 0.613,
+        "select_ms": 45.8
+      },
+      "rag_alerts": {
+        "target": "memory-leak",
+        "score": 0.613,
+        "select_ms": 32.3
+      },
+      "rag_auto": {
+        "target": "memory-leak",
+        "score": 0.613,
+        "select_ms": 31.3
+      }
+    }
+  },
+  {
+    "id": 102,
+    "group": "시스템 명시",
+    "query": "log-service 로그 때문에 디스크가 꽉 찼어요",
+    "expect": [
+      "disk-full"
+    ],
+    "path": "plan",
+    "systems": [
+      "log-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "disk-full",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "disk-full",
+        "score": 0.556,
+        "select_ms": 62.6
+      },
+      "rag_alerts": {
+        "target": "disk-full",
+        "score": 0.582,
+        "select_ms": 37.1
+      },
+      "rag_auto": {
+        "target": "disk-full",
+        "score": 0.582,
+        "select_ms": 32.1
+      }
+    }
+  },
+  {
+    "id": 103,
+    "group": "시스템 명시",
+    "query": "payments-service CPU 사용률이 너무 높아요",
+    "expect": [
+      "cpu-spike"
+    ],
+    "path": "plan",
+    "systems": [
+      "payments-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "cpu-spike",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "cpu-spike",
+        "score": 0.628,
+        "select_ms": 64.5
+      },
+      "rag_alerts": {
+        "target": "cpu-spike",
+        "score": 0.61,
+        "select_ms": 35.4
+      },
+      "rag_auto": {
+        "target": "cpu-spike",
+        "score": 0.61,
+        "select_ms": 32.8
+      }
+    }
+  },
+  {
+    "id": 104,
+    "group": "시스템 명시",
+    "query": "gateway-service 502 504가 간헐적으로 떠요, 패킷 손실도 있는 것 같아요",
+    "expect": [
+      "network-timeout"
+    ],
+    "path": "plan",
+    "systems": [
+      "gateway-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "network-timeout",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "queue-backlog",
+        "score": 0.523,
+        "select_ms": 60.9
+      },
+      "rag_alerts": {
+        "target": "network-timeout",
+        "score": 0.551,
+        "select_ms": 37.9
+      },
+      "rag_auto": {
+        "target": "network-timeout",
+        "score": 0.551,
+        "select_ms": 34.0
+      }
+    }
+  },
+  {
+    "id": 105,
+    "group": "시스템 명시",
+    "query": "gateway-service 요청이 업스트림에서 타임아웃 되고 있어요",
+    "expect": [
+      "network-timeout"
+    ],
+    "path": "plan",
+    "systems": [
+      "gateway-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "network-timeout",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "network-timeout",
+        "score": 0.539,
+        "select_ms": 64.8
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.56,
+        "select_ms": 37.4
+      },
+      "rag_auto": {
+        "target": "high-latency",
+        "score": 0.56,
+        "select_ms": 33.5
+      }
+    }
+  },
+  {
+    "id": 106,
+    "group": "시스템 명시",
+    "query": "auth-service 응답 시간이 길어지고 커넥션이 부족해요",
+    "expect": [
+      "high-latency"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "queue-backlog",
+        "score": 0.624,
+        "select_ms": 63.2
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.672,
+        "select_ms": 36.5
+      },
+      "rag_auto": {
+        "target": "high-latency",
+        "score": 0.672,
+        "select_ms": 32.8
+      }
+    }
+  },
+  {
+    "id": 108,
+    "group": "시스템 미명시",
+    "query": "서비스 응답이 너무 늦어요",
+    "expect": [
+      "high-latency",
+      "cpu-spike"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "queue-backlog",
+        "score": 0.589,
+        "select_ms": 68.2
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.69,
+        "select_ms": 38.2
+      },
+      "rag_auto": {
+        "target": "queue-backlog",
+        "score": 0.589,
+        "select_ms": 32.1
+      }
+    }
+  },
+  {
+    "id": 109,
+    "group": "시스템 미명시",
+    "query": "메모리가 계속 차올라서 서버가 죽을 것 같아요",
+    "expect": [
+      "memory-leak"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "memory-leak",
+        "score": 0.55,
+        "select_ms": 55.0
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.651,
+        "select_ms": 40.7
+      },
+      "rag_auto": {
+        "target": "memory-leak",
+        "score": 0.55,
+        "select_ms": 31.7
+      }
+    }
+  },
+  {
+    "id": 110,
+    "group": "시스템 미명시",
+    "query": "디스크 용량이 부족하다는 경고가 와요",
+    "expect": [
+      "disk-full"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "disk-full",
+        "score": 0.668,
+        "select_ms": 63.2
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.656,
+        "select_ms": 36.5
+      },
+      "rag_auto": {
+        "target": "disk-full",
+        "score": 0.668,
+        "select_ms": 32.6
+      }
+    }
+  },
+  {
+    "id": 111,
+    "group": "시스템 미명시",
+    "query": "DB 연결이 안 되고 데이터베이스가 내려간 것 같아요",
+    "expect": [
+      "db-down"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "db-down",
+        "score": 0.599,
+        "select_ms": 66.3
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.655,
+        "select_ms": 35.6
+      },
+      "rag_auto": {
+        "target": "db-down",
+        "score": 0.599,
+        "select_ms": 32.7
+      }
+    }
+  },
+  {
+    "id": 112,
+    "group": "시스템 미명시",
+    "query": "SSL 인증서 갱신이 안 됐나 봐요, 브라우저에서 경고가 떠요",
+    "expect": [
+      "ssl-cert-expiry"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "ssl-cert-expiry",
+        "score": 0.714,
+        "select_ms": 78.6
+      },
+      "rag_alerts": {
+        "target": "ssl-cert-expiry",
+        "score": 0.647,
+        "select_ms": 36.9
+      },
+      "rag_auto": {
+        "target": "ssl-cert-expiry",
+        "score": 0.714,
+        "select_ms": 32.2
+      }
+    }
+  },
+  {
+    "id": 113,
+    "group": "시스템 미명시",
+    "query": "작업 큐에 쌓인 메시지가 처리가 안 돼요",
+    "expect": [
+      "queue-backlog"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "queue-backlog",
+        "score": 0.642,
+        "select_ms": 65.8
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.683,
+        "select_ms": 37.1
+      },
+      "rag_auto": {
+        "target": "queue-backlog",
+        "score": 0.642,
+        "select_ms": 33.5
+      }
+    }
+  },
+  {
+    "id": 114,
+    "group": "시스템 미명시",
+    "query": "어제 배포한 버전에서 오류가 갑자기 늘었어요",
+    "expect": [
+      "bad-deploy"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "bad-deploy",
+        "score": 0.625,
+        "select_ms": 58.8
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.65,
+        "select_ms": 35.2
+      },
+      "rag_auto": {
+        "target": "bad-deploy",
+        "score": 0.625,
+        "select_ms": 32.3
+      }
+    }
+  },
+  {
+    "id": 115,
+    "group": "시스템 미명시",
+    "query": "사용자들이 로그인을 못 하고 토큰 오류가 나요",
+    "expect": [
+      "auth-failure"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "auth-failure",
+        "score": 0.686,
+        "select_ms": 66.4
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.637,
+        "select_ms": 91.1
+      },
+      "rag_auto": {
+        "target": "auth-failure",
+        "score": 0.686,
+        "select_ms": 31.9
+      }
+    }
+  },
+  {
+    "id": 116,
+    "group": "모르는 시스템",
+    "query": "inventory-service가 계속 에러를 내요",
+    "expect": [
+      "unknown_system"
+    ],
+    "path": "unknown_system",
+    "modes": {
+      "rules": {
+        "target": "unknown_system",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "unknown_system",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_alerts": {
+        "target": "unknown_system",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_auto": {
+        "target": "unknown_system",
+        "score": null,
+        "select_ms": 0.0
+      }
+    }
+  },
+  {
+    "id": 117,
+    "group": "모르는 시스템",
+    "query": "shipping-service 응답이 느려요",
+    "expect": [
+      "unknown_system"
+    ],
+    "path": "unknown_system",
+    "modes": {
+      "rules": {
+        "target": "unknown_system",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "unknown_system",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_alerts": {
+        "target": "unknown_system",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_auto": {
+        "target": "unknown_system",
+        "score": null,
+        "select_ms": 0.0
+      }
+    }
+  },
+  {
+    "id": 118,
+    "group": "섞인 질문",
+    "query": "cache-service랑 inventory-service 둘 다 메모리가 이상해요",
+    "expect": [
+      "memory-leak"
+    ],
+    "path": "plan",
+    "systems": [
+      "cache-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "memory-leak",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "queue-backlog",
+        "score": 0.442,
+        "select_ms": 67.5
+      },
+      "rag_alerts": {
+        "target": "memory-leak",
+        "score": 0.528,
+        "select_ms": 37.0
+      },
+      "rag_auto": {
+        "target": "memory-leak",
+        "score": 0.528,
+        "select_ms": 32.9
+      }
+    }
+  },
+  {
+    "id": 119,
+    "group": "범위 밖",
+    "query": "점심시간에 엘리베이터가 너무 느려요",
+    "expect": [
+      "none",
+      "chat"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "queue-backlog",
+        "score": 0.483,
+        "select_ms": 80.4
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.645,
+        "select_ms": 32.4
+      },
+      "rag_auto": {
+        "target": "queue-backlog",
+        "score": 0.483,
+        "select_ms": 31.4
+      }
+    }
+  },
+  {
+    "id": 120,
+    "group": "범위 밖",
+    "query": "회사 커피머신이 고장났어요",
+    "expect": [
+      "none",
+      "chat"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "queue-backlog",
+        "score": 0.455,
+        "select_ms": 68.1
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.622,
+        "select_ms": 36.7
+      },
+      "rag_auto": {
+        "target": "queue-backlog",
+        "score": 0.455,
+        "select_ms": 34.8
+      }
+    }
+  },
+  {
+    "id": 121,
+    "group": "범위 밖",
+    "query": "노트북 화면이 깜빡거려요",
+    "expect": [
+      "none",
+      "chat"
+    ],
+    "path": "plan",
+    "systems": [
+      "auth-service"
+    ],
+    "modes": {
+      "rules": {
+        "target": "high-latency",
+        "score": null,
+        "select_ms": 0.0
+      },
+      "rag_query": {
+        "target": "cpu-spike",
+        "score": 0.509,
+        "select_ms": 67.5
+      },
+      "rag_alerts": {
+        "target": "high-latency",
+        "score": 0.648,
+        "select_ms": 36.2
+      },
+      "rag_auto": {
+        "target": "cpu-spike",
+        "score": 0.509,
+        "select_ms": 32.0
+      }
+    }
+  }
+]

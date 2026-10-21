@@ -1,0 +1,22 @@
+[
+  {"id": 101, "group": "시스템 명시", "query": "cache-service 메모리 누수 같아요, 계속 늘어나요", "expect": ["memory-leak"]},
+  {"id": 102, "group": "시스템 명시", "query": "log-service 로그 때문에 디스크가 꽉 찼어요", "expect": ["disk-full"]},
+  {"id": 103, "group": "시스템 명시", "query": "payments-service CPU 사용률이 너무 높아요", "expect": ["cpu-spike"]},
+  {"id": 104, "group": "시스템 명시", "query": "gateway-service 502 504가 간헐적으로 떠요, 패킷 손실도 있는 것 같아요", "expect": ["network-timeout"]},
+  {"id": 105, "group": "시스템 명시", "query": "gateway-service 요청이 업스트림에서 타임아웃 되고 있어요", "expect": ["network-timeout"]},
+  {"id": 106, "group": "시스템 명시", "query": "auth-service 응답 시간이 길어지고 커넥션이 부족해요", "expect": ["high-latency"]},
+  {"id": 108, "group": "시스템 미명시", "query": "서비스 응답이 너무 늦어요", "expect": ["high-latency", "cpu-spike"]},
+  {"id": 109, "group": "시스템 미명시", "query": "메모리가 계속 차올라서 서버가 죽을 것 같아요", "expect": ["memory-leak"]},
+  {"id": 110, "group": "시스템 미명시", "query": "디스크 용량이 부족하다는 경고가 와요", "expect": ["disk-full"]},
+  {"id": 111, "group": "시스템 미명시", "query": "DB 연결이 안 되고 데이터베이스가 내려간 것 같아요", "expect": ["db-down"]},
+  {"id": 112, "group": "시스템 미명시", "query": "SSL 인증서 갱신이 안 됐나 봐요, 브라우저에서 경고가 떠요", "expect": ["ssl-cert-expiry"]},
+  {"id": 113, "group": "시스템 미명시", "query": "작업 큐에 쌓인 메시지가 처리가 안 돼요", "expect": ["queue-backlog"]},
+  {"id": 114, "group": "시스템 미명시", "query": "어제 배포한 버전에서 오류가 갑자기 늘었어요", "expect": ["bad-deploy"]},
+  {"id": 115, "group": "시스템 미명시", "query": "사용자들이 로그인을 못 하고 토큰 오류가 나요", "expect": ["auth-failure"]},
+  {"id": 116, "group": "모르는 시스템", "query": "inventory-service가 계속 에러를 내요", "expect": ["unknown_system"]},
+  {"id": 117, "group": "모르는 시스템", "query": "shipping-service 응답이 느려요", "expect": ["unknown_system"]},
+  {"id": 118, "group": "섞인 질문", "query": "cache-service랑 inventory-service 둘 다 메모리가 이상해요", "expect": ["memory-leak"]},
+  {"id": 119, "group": "범위 밖", "query": "점심시간에 엘리베이터가 너무 느려요", "expect": ["none", "chat"]},
+  {"id": 120, "group": "범위 밖", "query": "회사 커피머신이 고장났어요", "expect": ["none", "chat"]},
+  {"id": 121, "group": "범위 밖", "query": "노트북 화면이 깜빡거려요", "expect": ["none", "chat"]}
+]
