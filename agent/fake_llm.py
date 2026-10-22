@@ -8,6 +8,8 @@ import re
 
 from langsmith import traceable
 
+from .agents.decision import rule_decide
+
 
 class FakeLLM:
     def __init__(self, name: str, usd_per_1k_tokens: float):
@@ -28,6 +30,12 @@ class FastLLM(FakeLLM):
         """Wave 5 — 쿼리 라우팅. 장애 관련이면 incident 파이프라인, 아니면 chat 직행."""
         incident = bool(re.search(r"장애|진단|다운|지연|급증|incident|티켓", query))
         result = {"route": "incident" if incident else "chat", "needs_analysis": False}
+        return result, self._usage(query, str(result))
+
+    @traceable(run_type="llm", name="fast_llm.decide_agents")
+    def decide_agents(self, query: str) -> tuple[dict, dict]:
+        """조사 총괄의 판단(테스트용 가짜): 코드 규칙으로 고른다."""
+        result = rule_decide(query)
         return result, self._usage(query, str(result))
 
     @traceable(run_type="llm", name="fast_llm.plan")

@@ -19,6 +19,7 @@ from langsmith import traceable
 OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
 
 
+from .agents.decision import AGENTS_SCHEMA, DECIDE_PROMPT, parse_decision
 from .systems import DEFAULT_SYSTEM, KNOWN_SYSTEMS, _guess_target, _guess_targets  # noqa: F401
 
 
@@ -133,6 +134,12 @@ class OllamaFastLLM(OllamaLLM):
             result = {"route": "incident" if incident else "chat",
                       "needs_analysis": False}
         return result, usage
+
+    @traceable(run_type="llm", name="ollama_fast.decide_agents")
+    def decide_agents(self, query: str) -> tuple[dict, dict]:
+        """조사 총괄의 판단: 질문에 어떤 에이전트(metrics/log/runbook)가 필요한지 고른다."""
+        content, usage = self._chat(DECIDE_PROMPT, query, schema=AGENTS_SCHEMA)
+        return parse_decision(content, query), usage
 
     @traceable(run_type="llm", name="ollama_fast.plan")
     def plan(self, query: str, procedure_prompt: str) -> tuple[dict, dict]:

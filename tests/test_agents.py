@@ -129,13 +129,13 @@ def test_runbook_subgraph_branches_on_match():
     assert "CPU 급증" in out["data"]
 
 
-# 총괄 서브그래프: 노드 6개가 있고 metrics·log가 둘 다 prepare에서 갈라져 merge에서 합쳐진다
+# 총괄 서브그래프: 판단(decide) 뒤에 metrics·log가 갈라져 merge에서 합쳐진다
 def test_supervisor_subgraph_structure():
     from agent.agents.research_supervisor import build_research_graph
     g = build_research_graph(make_deps()).get_graph()
-    assert {"prepare", "metrics", "log", "merge", "runbook", "finish"} <= set(g.nodes)
+    assert {"prepare", "decide", "metrics", "log", "merge", "runbook", "finish"} <= set(g.nodes)
     edges = {(e.source, e.target) for e in g.edges}
-    assert {("prepare", "metrics"), ("prepare", "log"),
+    assert {("prepare", "decide"), ("decide", "metrics"), ("decide", "log"),
             ("metrics", "merge"), ("log", "merge")} <= edges
 
 
@@ -160,3 +160,39 @@ def test_supervisor_marks_tasks_done_and_reports_timing():
     assert out["tasks"][0]["status"] == "done"
     assert out["retry_count"] == 0 and out["parallel_elapsed"] >= 0
     assert {c["source"] for c in out["collected"]} == {"monitoring", "log", "runbook"}
+
+
+# ---------- 총괄의 판단(어떤 에이전트를 부를지) ----------
+
+# 장애 원인을 묻는 질문이면 세 에이전트를 모두 부른다
+def test_supervisor_calls_all_agents_for_troubleshooting_question():
+    deps = make_deps(FakeRetriever("cpu-spike"))
+    result = run_graph(deps, "multi", "auth-service 로그인 응답이 느려요, 원인 확인해줘")
+    decided = next(e for e in result["events"] if e["type"] == "AgentsDecided")
+    assert decided["agents"] == ["metrics", "log", "runbook"]
+    assert {n for n, _ in deps.mcp.calls} == {"get_monitoring_status", "get_recent_logs"}
+
+
+# 현황만 묻는 질문이면 로그·매뉴얼 에이전트를 부르지 않는다 (MCP 호출 수가 줄어든다)
+def test_supervisor_skips_log_and_runbook_for_status_only_question():
+    deps = make_deps(FakeRetriever("cpu-spike"))
+    result = run_graph(deps, "multi", "web-01 현재 상태 알려줘")
+    decided = next(e for e in result["events"] if e["type"] == "AgentsDecided")
+    assert decided["agents"] == ["metrics"]
+    assert [n for n, _ in deps.mcp.calls] == ["get_monitoring_status"]      # 로그 조회 호출이 없다
+    skipped = [e["agent"] for e in result["events"] if e["type"] == "AgentSkipped"]
+    assert skipped == ["log_agent", "runbook_agent"]
+
+
+# 매뉴얼을 부르지 않기로 했으면 "매뉴얼을 찾지 못했다"는 안내도 붙이지 않는다
+def test_no_missing_runbook_note_when_runbook_agent_was_skipped():
+    result = run_graph(make_deps(FakeRetriever(None)), "multi", "web-01 현재 상태 알려줘")
+    assert "대응 매뉴얼을 찾지 못해" not in result["final"]
+
+
+# 판단용 AI 호출 비용이 전체 비용(cost_usd)에 합산된다
+def test_decision_cost_is_added_to_total_cost():
+    deps = make_deps(FakeRetriever("cpu-spike"))
+    deps.fast_llm.usd_per_1k = 1000.0           # 비용이 눈에 띄게 큰 가짜 단가
+    result = run_graph(deps, "multi", "auth-service 장애 진단해줘")
+    assert result["cost_usd"] > 0

@@ -29,6 +29,7 @@ from langsmith import traceable
 OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 
 
+from .agents.decision import DECIDE_JSON_HINT, DECIDE_PROMPT, parse_decision
 from .systems import DEFAULT_SYSTEM, KNOWN_SYSTEMS, _guess_target, _guess_targets  # noqa: F401
 
 
@@ -98,6 +99,12 @@ class OpenAIFastLLM(OpenAILLM):
             result = {"route": "incident" if incident else "chat",
                       "needs_analysis": False}
         return result, usage
+
+    @traceable(run_type="llm", name="openai_fast.decide_agents")
+    def decide_agents(self, query: str) -> tuple[dict, dict]:
+        """조사 총괄의 판단: 질문에 어떤 에이전트(metrics/log/runbook)가 필요한지 고른다."""
+        content, usage = self._chat(DECIDE_PROMPT + DECIDE_JSON_HINT, query, json_mode=True)
+        return parse_decision(content, query), usage
 
     @traceable(run_type="llm", name="openai_fast.plan")
     def plan(self, query: str, procedure_prompt: str) -> tuple[dict, dict]:

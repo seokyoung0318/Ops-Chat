@@ -120,6 +120,8 @@ const STEP_LABELS = {
   TaskCompleted: e => (e.source === 'monitoring'
       ? `모니터링 지표 확인 (시스템: ${e.target})`
       : `대응 매뉴얼(runbook) 조회 (장애유형: ${e.target})`) + (e.retries ? ' (재시도 성공)' : ''),
+  AgentsDecided: e => `총괄 판단: ${e.agents.map(a => ({metrics: '메트릭', log: '로그', runbook: '매뉴얼'}[a] ?? a)).join(' · ')} 에이전트 호출${e.reason ? ` (${e.reason})` : ''}`,
+  AgentSkipped: e => `${{metrics_agent: '메트릭', log_agent: '로그', runbook_agent: '매뉴얼'}[e.agent] ?? e.agent} 에이전트 생략 (필요 없다고 판단)`,
   AgentCompleted: e => `${{metrics_agent: '메트릭', log_agent: '로그', runbook_agent: '매뉴얼'}[e.agent] ?? e.agent} 에이전트 완료`,
   ReplanCheck: e => e.is_sufficient ? null : `정보 부족 → 장애유형 "${e.target}"로 추가 조사`,
   DraftWritten: e => `답변 초안 작성 (시도 ${e.attempt})`,
