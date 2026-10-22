@@ -68,6 +68,17 @@
 
 <img src="report_assets/before_auth_service_retry.png" width="420" alt="재시도 성공 표시">
 
+### 같은 질문의 개선 후(After) 화면
+
+위 ①②와 **같은 질문**을 개선된 구조(`PIPELINE=multi`)에 보냈다. 한 화면에 두 질문이 이어서 나온다.
+
+- **`billing-service 응답이 느려요`** — 조사 없이 "모니터링 대상 목록에 없어 조회할 수 없습니다"와 조회 가능한 시스템 목록을 안내한다(Before: auth-service 수치로 오답).
+- **`web-01 CPU 급증 원인 진단해줘`** — 메트릭·로그·매뉴얼 에이전트를 거쳐 매뉴얼 `cpu-spike`를 골랐고(Before: `db-down`), 로그를 근거로 "CPU 35.6%로 급증 상태가 아니다"라고 답한다(웹서버 데이터가 정상으로 설정된 샘플이다).
+
+<img src="report_assets/after_same_questions_multi.png" width="900" alt="After: 같은 두 질문에 대한 개선 후 화면">
+
+> **비교할 때 유의할 점**: Before는 로컬 Ollama(qwen3), After는 OpenAI(gpt-4o-mini / gpt-4o)로 캡처해 **모델이 다르다.** 답변 문장은 모델에 따라 달라지므로, 이 비교가 보여 주는 것은 문장 품질이 아니라 **잘못된 동작(없는 시스템에 오답, 엉뚱한 매뉴얼)이 사라졌다**는 점이다. 매뉴얼 선택 정확도는 모델과 무관한 검색(RAG)이 정하며, 아래 평가 표로 별도로 측정했다.
+
 ### 개선 후(After) 최종 실행 화면
 
 > OpenAI 모델(gpt-4o-mini / gpt-4o)에 같은 질문(`cache-service 메모리가 계속 올라가요`)을 보내, 서버를 `PIPELINE=single` / `multi`로 각각 켜서 캡처했다. 화면의 수치(메모리 87.6%, 89.2% 등)는 호출마다 값을 흔들게 만든 시뮬레이션이라 매번 다르다.
@@ -82,9 +93,13 @@
 
 ### LangSmith 트레이스
 
-single 방식 한 요청의 전체 기록이다(노드 → MCP·AI 호출, 단계별 시간). 같은 질문의 multi 방식에서는 `research` 반복이 없어지고 `research_supervisor` 아래에 세 에이전트가 나온다.
+**single** 방식 한 요청의 전체 기록이다(노드 → MCP·AI 호출, 단계별 시간). `research`가 두 번 나타나는 것이 재조사 반복이다.
 
 <img src="report_assets/langsmith_trace_single.png" width="900" alt="LangSmith 트레이스(single)">
+
+**multi** 방식 한 요청의 전체 기록이다. `research` 반복이 없고, `research_supervisor` 아래에서 `log_agent`와 `metrics_agent`(병렬)가 끝나면 `merge`로 합쳐지고, 이어서 `runbook_agent`(`select` → `read`)가 실행된다. 각 에이전트는 자기 서브그래프이며, 그 안에서 MCP 도구(`mcp.call_tool`, `mcp.read_resource`)를 호출한다. 태그 `pipeline:multi`로 구분된다.
+
+<img src="report_assets/langsmith_trace_multi.png" width="900" alt="LangSmith 트레이스(multi)">
 
 ### runbook 선택 정확도 평가 (`eval/run_eval.py`, 개발 질문 23개)
 
