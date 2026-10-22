@@ -8,6 +8,7 @@ from langsmith import traceable
 
 from .deps import SupervisorDeps
 from .retry import with_retry
+from .systems import DEFAULT_SYSTEM
 
 
 @traceable(name="supervisor_v1_legacy")
@@ -18,7 +19,7 @@ async def run_v1(deps: SupervisorDeps, query: str, thread_id: str,
     reply, usage = await deps.fast_llm.chat(query, history)
     if "도와드릴까요" in reply and ("장애" in query or "진단" in query):
         data, retries = await with_retry(
-            deps.mcp.call_tool, "get_monitoring_status", {"system_name": "auth-service"})
+            deps.mcp.call_tool, "get_monitoring_status", {"system_name": DEFAULT_SYSTEM})
         reply = (f"{data['system_name']} 상태={data['status']}, "
                  f"CPU {data['cpu_percent']}% 입니다. 자세한 절차는 담당자에게 문의하세요.")
         events.append({"type": "TaskCompleted", "source": "monitoring",

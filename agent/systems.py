@@ -4,8 +4,11 @@ graph.py에 섞여 있던 시스템 이름 처리를 한곳으로 모았다(동�
 """
 import json
 import re
+import os
 from pathlib import Path
 
+# 시스템을 말하지 않았을 때 조회할 기본 시스템. 환경변수 DEFAULT_SYSTEM으로 바꿀 수 있다.
+DEFAULT_SYSTEM = os.environ.get("DEFAULT_SYSTEM", "auth-service")
 
 def _load_known_systems() -> set[str]:
     """data/monitoring.json의 시스템 이름들을 읽는다 (ollama_llm.py/openai_llm.py와 동일한 소스)."""
@@ -13,7 +16,8 @@ def _load_known_systems() -> set[str]:
     try:
         return set(json.loads(path.read_text()).keys())
     except (OSError, json.JSONDecodeError):
-        return {"auth-service", "web-01"}
+        print(f"[경고] {path}를 읽지 못해 기본 시스템 목록으로 대체합니다")
+        return {DEFAULT_SYSTEM}
 
 
 KNOWN_SYSTEMS = _load_known_systems()
@@ -44,6 +48,18 @@ def _extract_system_name(query: str) -> str:
     prompt)의 system_name은 "시스템: X" 한 줄짜리 컨텍스트라 항상 정해진 이름
     중 하나로만 고정한다(여러 개 언급돼도 join하지 않음 — 실제 조사 대상 목록은
     이후 plan()의 tasks가 별도로 결정). 쿼리에서 가장 먼저 등장하는 시스템을
-    고르고, 하나도 안 걸리면 가장 흔한 사례인 auth-service로 폴백."""
+    고르고, 하나도 안 걸리면 DEFAULT_SYSTEM으로 폴백."""
     matches = [(query.index(s), s) for s in KNOWN_SYSTEMS if s in query]
-    return min(matches)[1] if matches else "auth-service"
+    return min(matches)[1] if matches else DEFAULT_SYSTEM
+
+def _guess_target(query: str) -> str:
+    """질문에서 실제 시스템 이름을 찾는다. 소형 모델이 target을 비우거나 오타를 내면
+    코드가 보정하는 안전망이다. 하나도 안 걸리면 DEFAULT_SYSTEM."""
+    return _extract_system_name(query)
+
+
+def _guess_targets(query: str) -> list[str]:
+    """조사 task가 통째로 0개일 때의 복구용 — 질문에 나온 알려진 시스템을 전부 돌려준다.
+    하나만 고르면 나머지가 조사에서 빠지고 write 단계가 수치를 지어내기 때문이다."""
+    matched = sorted(s for s in KNOWN_SYSTEMS if s in query)
+    return matched or [DEFAULT_SYSTEM]
