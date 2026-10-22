@@ -210,7 +210,8 @@ class OllamaQualityLLM(OllamaLLM):
               feedback: str | None, on_token=None) -> tuple[str, dict]:
         system = ("당신은 ICT 운영 보고 작성자다. 수집된 사실만 사용해 한국어로 "
                   "간결한 대응 보고를 작성하라. 반드시 '1) ... 2) ... 3) ...' 형식의 "
-                  "번호 절차로 답하고, 수치는 수집된 값을 그대로 인용하라.")
+                  "번호 절차로 답하고, 수치는 수집된 값을 그대로 인용하라. "
+                  "최근 로그가 있으면 원인을 짚는 근거로 로그 내용을 한 번 인용하라.")
         facts = []
         for c in collected:
             if c["source"] == "monitoring":
