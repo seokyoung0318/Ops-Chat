@@ -8,6 +8,7 @@ import os                                        # 환경변수(RAG_INPUT) 읽�
 import time                                      # runbook 선택 시간 측정
 
 from langsmith import traceable                  # LangSmith 기록용 장식자
+from langsmith.run_helpers import get_current_run_tree   # 기록에 메타데이터를 덧붙일 때 사용
 
 from ..deps import SupervisorDeps                # 도구 상자 형식
 from ..state import AgentState                   # 공용 메모장 양식
@@ -85,6 +86,10 @@ async def replan_check_node(state: AgentState, deps: SupervisorDeps) -> dict:
         incident_type = _classify_incident_type(state.get("collected", []))
         score, method = None, "rules"
     select_ms = round((time.perf_counter() - started) * 1000, 1)
+    rt = get_current_run_tree()   # LangSmith 기록에 '무엇을 몇 점으로 골랐는지' 남기기 (multi의 runbook_agent와 같은 항목)
+    if rt is not None:
+        rt.metadata.update({"selected_runbook": incident_type or "none", "score": score,
+                            "select_ms": select_ms, "method": method})
 
     if incident_type is None:   # 임계값 미만 — 맞는 runbook이 없다. 억지로 고르지 않는다
         verdict = {"type": "ReplanCheck", "round": rounds, "is_sufficient": True,

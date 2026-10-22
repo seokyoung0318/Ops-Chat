@@ -13,6 +13,7 @@ from typing import Optional, TypedDict
 
 from langgraph.graph import END, StateGraph
 from langsmith import traceable
+from langsmith.run_helpers import get_current_run_tree
 
 from ..nodes.replan import _classify_incident_type, _search_text
 
@@ -64,5 +65,10 @@ def build_runbook_graph(deps):
 async def run(query: str, collected: list[dict], deps) -> dict:
     """결과: {"incident_type", "data", "method", "score", "select_ms"} (매칭 없으면 type·data는 None)."""
     out = await build_runbook_graph(deps).ainvoke({"query": query, "collected": collected})
+    rt = get_current_run_tree()   # LangSmith 기록에 '무엇을 몇 점으로 골랐는지' 남기기
+    if rt is not None:
+        rt.metadata.update({"selected_runbook": out.get("incident_type") or "none",
+                            "score": out["score"], "select_ms": out["select_ms"],
+                            "method": out["method"]})
     return {"incident_type": out.get("incident_type"), "data": out.get("data"),
             "method": out["method"], "score": out["score"], "select_ms": out["select_ms"]}

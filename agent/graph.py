@@ -66,4 +66,10 @@ def build_graph(deps: SupervisorDeps, pipeline: str | None = None):
     g.add_conditional_edges("validate", _after_validate,
                             {"finalize": "finalize", "write": "write"})
     g.add_edge("finalize", END)
-    return g.compile()
+    # LangSmith에서 기록을 열자마자 '어떤 설정으로 돌았는지' 보이도록 모든 실행에 라벨을 붙인다.
+    # (server.py·테스트·스크립트 어디서 호출해도 자동 적용됨)
+    labels = {"pipeline": pipeline,                                    # single | multi
+              "classifier": "rag" if deps.retriever is not None else "rules",
+              "fast_model": getattr(deps.fast_llm, "name", "?"),
+              "quality_model": getattr(deps.quality_llm, "name", "?")}
+    return g.compile().with_config({"tags": [f"pipeline:{pipeline}"], "metadata": labels})
