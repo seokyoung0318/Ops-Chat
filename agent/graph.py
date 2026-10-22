@@ -8,6 +8,7 @@ incident: plan(MCP Prompt 절차 반영) → gate(권위 게이트) → research
 모든 노드는 SupervisorDeps를 functools.partial로 주입받는 순수 함수다(Wave 13).
 각 노드는 @traceable로 LangSmith에 계층 트리로 기록된다.
 """
+import os
 from functools import partial
 
 from langgraph.graph import END, StateGraph
@@ -18,13 +19,17 @@ from .nodes.routing import _after_route, chat_answer_node, route_node, unknown_s
 from .nodes.planning import plan_node, gate_node
 from .nodes.research import research_node
 from .nodes.replan import _after_replan_check, replan_check_node
+from .agents.research_supervisor import research_supervisor_node
 from .nodes.analysis import analysis_node
 from .nodes.writing import _after_validate, finalize_node, validate_node, write_node
 # build_graph에서는 안 쓰지만 tests/test_systems.py가 agent.graph에서 가져오므로 남겨 둔다
 from .systems import _mentioned_systems, _split_systems  # noqa: F401
 
 
-def build_graph(deps: SupervisorDeps):
+def build_graph(deps: SupervisorDeps, pipeline: str | None = None):
+    """pipeline: 'single'(기존 조사 노드 1개 + 재계획) | 'multi'(조사 총괄이 하위 에이전트 3개를 지휘).
+    생략하면 환경변수 PIPELINE(기본 single)."""
+    pipeline = pipeline or os.environ.get("PIPELINE", "single")
     g = StateGraph(AgentState)
     node = lambda fn: partial(fn, deps=deps)   # Wave 13 — 명시적 의존성 주입
     g.add_node("route", node(route_node))
@@ -32,8 +37,11 @@ def build_graph(deps: SupervisorDeps):
     g.add_node("unknown_system", node(unknown_system_node))   # 개선 2
     g.add_node("plan", node(plan_node))
     g.add_node("gate", node(gate_node))
-    g.add_node("research", node(research_node))
-    g.add_node("replan_check", node(replan_check_node))
+    if pipeline == "multi":
+        g.add_node("research", node(research_supervisor_node))   # 메트릭∥로그 → runbook
+    else:
+        g.add_node("research", node(research_node))
+        g.add_node("replan_check", node(replan_check_node))
     g.add_node("analysis", node(analysis_node))
     g.add_node("write", node(write_node))
     g.add_node("validate", node(validate_node))
@@ -47,9 +55,12 @@ def build_graph(deps: SupervisorDeps):
     g.add_edge("unknown_system", END)
     g.add_edge("plan", "gate")
     g.add_edge("gate", "research")
-    g.add_edge("research", "replan_check")
-    g.add_conditional_edges("replan_check", _after_replan_check,
-                            {"analysis": "analysis", "research": "research"})
+    if pipeline == "multi":
+        g.add_edge("research", "analysis")   # runbook까지 한 번에 끝나므로 재계획 루프 없음
+    else:
+        g.add_edge("research", "replan_check")
+        g.add_conditional_edges("replan_check", _after_replan_check,
+                                {"analysis": "analysis", "research": "research"})
     g.add_edge("analysis", "write")
     g.add_edge("write", "validate")
     g.add_conditional_edges("validate", _after_validate,

@@ -111,6 +111,10 @@ class QualityLLM(FakeLLM):
             f"CPU {c['data']['cpu_percent']}% (알림 {len(c['data']['alerts'])}건)"
             for c in mon)
         lines = [f"'{query}' 진단 결과:", f"1) 모니터링: {summary}"]
+        logs = [c for c in collected if c["source"] == "log" and c["data"]["lines"]]
+        if logs:
+            lines.append("로그: " + " / ".join(
+                f"{c['data']['system_name']} '{c['data']['lines'][-1]}'" for c in logs))
         if run:
             body_lines = [l.strip() for l in run[0]["data"].strip().splitlines() if l.strip()]
             title = body_lines[0].lstrip("# ")

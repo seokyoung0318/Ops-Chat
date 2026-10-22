@@ -1,0 +1,7 @@
+{
+  "system_name": "web-01",
+  "lines": [
+    "INFO  health check ok",
+    "INFO  request rate normal (120 rps)"
+  ]
+}

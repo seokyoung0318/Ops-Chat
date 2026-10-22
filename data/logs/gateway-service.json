@@ -1,0 +1,7 @@
+{
+  "system_name": "gateway-service",
+  "lines": [
+    "WARN  upstream timeout to auth-service (3 of 50 requests)",
+    "ERROR 504 Gateway Timeout on /login"
+  ]
+}

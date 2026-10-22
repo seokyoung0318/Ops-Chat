@@ -1,0 +1,8 @@
+{
+  "system_name": "payments-service",
+  "lines": [
+    "WARN  CPU 91% sustained for 10m",
+    "ERROR payments-service-3 response time 4.1s",
+    "WARN  retry queue growing (230 pending)"
+  ]
+}

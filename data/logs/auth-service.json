@@ -1,0 +1,8 @@
+{
+  "system_name": "auth-service",
+  "lines": [
+    "WARN  connection pool exhausted (92/100), waiting 1800ms",
+    "ERROR slow query on sessions table: 2.3s",
+    "WARN  p95 latency 2.4s exceeds threshold 1.0s"
+  ]
+}

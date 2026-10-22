@@ -1,0 +1,8 @@
+{
+  "system_name": "cache-service",
+  "lines": [
+    "WARN  heap usage 89% and rising for 6h",
+    "WARN  eviction rate increased 3x",
+    "ERROR full GC took 1.9s"
+  ]
+}

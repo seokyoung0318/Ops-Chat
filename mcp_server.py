@@ -53,6 +53,16 @@ def get_monitoring_status(system_name: str) -> SystemStatus:
     )
 
 
+@mcp.tool()
+def get_recent_logs(system_name: str, limit: int = 5) -> dict:
+    """지정된 시스템의 최근 로그를 조회합니다 (log_agent가 사용). data/logs/의 합성 데이터이며 실제 로그가 아니다."""
+    path = DATA_DIR / "logs" / f"{system_name}.json"
+    if not path.exists():
+        return {"system_name": system_name, "lines": [], "note": "로그 없음"}
+    data = json.loads(path.read_text())
+    return {"system_name": system_name, "lines": data["lines"][-limit:]}
+
+
 @mcp.resource("runbook://incident-response/{incident_type}")
 def get_incident_runbook(incident_type: str) -> str:
     """특정 incident 유형의 runbook(정적 문서)을 반환합니다."""

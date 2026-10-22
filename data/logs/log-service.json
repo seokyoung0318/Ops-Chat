@@ -1,0 +1,7 @@
+{
+  "system_name": "log-service",
+  "lines": [
+    "WARN  disk usage 94% on /var/log",
+    "ERROR failed to rotate log file: no space left"
+  ]
+}
