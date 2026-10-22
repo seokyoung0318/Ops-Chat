@@ -34,12 +34,12 @@
 ## §3 사용한 기술 요소
 | 기술 요소 | 우리 작업에서의 쓰임 | 상태 |
 |---|---|---|
-| RAG | runbook 임베딩 + 유사도 검색 (agent/rag.py 예정) | 예정 |
-| 의존성 주입 | SupervisorDeps에 retriever 추가 | 예정 |
+| RAG | runbook 임베딩(bge-m3) + 유사도 검색 (agent/rag.py) | 완료 |
+| 의존성 주입 | SupervisorDeps에 retriever 추가 | 완료 |
 | MCP | 기존 Tool/Resource/Prompt 유지, runbook 연동 | 기존 |
 | LangSmith | 노드별 trace로 분류 결과 확인 | 기존(.env tracing=true) |
-| 모듈화 / 단위 테스트 | graph.py 분리, pytest | 예정(선택) |
-| Multi-Agent | (현재 범위 밖. "추가 개선"으로 언급 가능) | - |
+| 모듈화 / 단위 테스트 | graph.py → nodes/ 분리, pytest | 완료 |
+| Multi-Agent | research_supervisor 서브그래프 + metrics·log·runbook 에이전트 (agents/, `PIPELINE=multi`) | 완료 |
 
 ### 아키텍처 그림
 - **Before 아키텍처** (확정): "코드 흐름 한눈에 보기" 그림. 개선 1=replan_check(`_classify_incident_type`), 개선 2=plan(`_extract_system_name`), validate는 (선택). 저장 위치 → `/Users/seokyoung/workspace/week15/report_assets/before_architecture.png` (이미지를 직접 저장해 둘 것)
@@ -205,18 +205,29 @@
 - 도구: `eval/queries_heldout.json`(id 101~121), `.venv/bin/python eval/run_eval.py eval/queries_heldout.json`, 결과 `eval/results_queries_heldout.json`. 질문은 기존 평가 결과를 반영하지 않고 새로 작성(같은 작성자), 실행은 1회, 결과를 보고 설계를 고치지 않음. 임계값 0.5.
 | 방식 | 튜닝 23문항 | 검증 20문항 |
 |---|---|---|
-| rules (Before) | 13/23 (57%) | 9/20 (45%) |
-| rag_query | 17/23 (74%) | 14/20 (70%) |
-| rag_alerts | 14/23 (61%) | 9/20 (45%) |
-| **rag_auto** | **19/23 (83%)** | **16/20 (80%)** |
-- 해석: 방식 간 순위(auto > query > rules, alerts는 query보다 낮음)가 새 질문에서도 유지됨 → 선택한 설계가 23문항에만 맞춰진 우연일 가능성은 낮아 보임. auto 정확도 83% → 80%로 소폭 하락. 다만 (1) 같은 작성자가 두 세트를 모두 썼고, (2) 20문항이라 1문항=5%p, (3) 검증 세트는 시스템 미명시 질문 비중이 높아(8/20) rules가 더 낮게 나오는 등 구성이 달라 직접 비교는 제한적, (4) auto와 query의 차이는 2문항으로 통계적으로 강하지 않음. "과적합이 없다"가 아니라 "심각한 과적합 징후는 보이지 않는다" 수준으로 표현할 것.
+| rules (Before) | 13/23 (57%) | 10/20 (50%) |
+| rag_query | 17/23 (74%) | 15/20 (75%) |
+| rag_alerts | 14/23 (61%) | 10/20 (50%) |
+| **rag_auto** | **19/23 (83%)** | **17/20 (85%)** |
+- 검증 열은 2026-10-22 재실행 값(`eval/results_queries_heldout.json`에서 `run_eval.py`와 같은 채점으로 다시 계산해 확인). 2026-10-21 첫 실행은 9/14/9/16(45%/70%/45%/80%)이었음.
+- 해석: 방식 간 순위(auto > query > rules, alerts는 query보다 낮음)가 새 질문에서도 유지됨 → 선택한 설계가 23문항에만 맞춰진 우연일 가능성은 낮아 보임. auto 정확도는 83%(튜닝) → 85%(검증)로 비슷하게 유지(첫 실행 때는 80%). 다만 (1) 같은 작성자가 두 세트를 모두 썼고, (2) 20문항이라 1문항=5%p, (3) 검증 세트는 시스템 미명시 질문 비중이 높아(8/20) rules가 더 낮게 나오는 등 구성이 달라 직접 비교는 제한적, (4) auto와 query의 차이는 2문항으로 통계적으로 강하지 않음. "과적합이 없다"가 아니라 "심각한 과적합 징후는 보이지 않는다" 수준으로 표현할 것.
 - 그룹별(검증): 시스템 명시 rules 6/6, auto 5/6 / 시스템 미명시 rules 1/8, auto 7/8 / 범위 밖 auto 2/3.
 - 새로 드러난 약점(설계 반영 전 기록만):
-  1. #117 `shipping-service 응답이 느려요`: route의 작은 모델이 chat으로 분류 → 개선 2의 unknown_system 분기가 route=incident에 의존해 작동하지 않음(모든 방식 오답). 시스템 이름이 들어 있어도 잡담으로 빠질 수 있음.
+  1. #117 `shipping-service 응답이 느려요`: route의 작은 모델이 chat으로 분류 → 개선 2의 unknown_system 분기가 route=incident에 의존해 작동하지 않음(모든 방식 오답). 시스템 이름이 들어 있어도 잡담으로 빠질 수 있음. → 이후 `route_node`가 시스템 이름이 있으면 incident로 보정하도록 수정(`nodes/routing.py`), 10/22 재실행에서는 정답.
   2. gateway-service 질문: 알림을 넣는 방식에서 network-timeout 대신 high-latency(#105 0.56). 학습 세트의 #2, #9와 같은 현상 → 우연이 아니라 체계적(원인 미확정, 조사 필요).
   3. 모호한 일반 질문(`서비스 응답이 너무 늦어요`)은 질문만 쓰면 queue-backlog로 쏠림(#108). 알림을 넣으면 high-latency로 맞음 → auto가 이 경우엔 손해.
   4. 범위 밖 `노트북 화면이 깜빡거려요`는 0.509로 임계값 0.5를 간신히 넘어 cpu-spike 선택(#121). 임계값 취약성 재확인.
 - 앞으로의 평가 원칙: 이번 20문항은 결과를 봤으므로 이후 수정에서는 개발용으로 간주. 최종 보고 전에 새 질문 세트를 한 번 더 만들어 1회만 평가.
+
+### single vs multi 비교 (조사 단계) — 2026-10-22
+- 도구: `eval/compare_pipelines.py`, 결과 `eval/results_pipeline_queries.json`. 같은 질문 23문항 중 조사를 실행하는 21문항 기준(나머지는 chat/모르는 시스템 경로로 두 방식이 동일).
+| 지표 | single | multi |
+|---|---|---|
+| runbook 선택 정확도 | 17/21 | 17/21 |
+| 조사 라운드(평균) | 1.86 | 1.00 |
+| MCP 호출(평균) | 1.86 | 2.86 |
+- 해석: 정확도는 같고, 재조사 반복이 구조에서 사라져 라운드가 줄었다. 대신 로그 조회가 추가되어 MCP 호출이 1회 늘었다.
+- 시간(ms)은 결과 파일에 기록돼 있으나 구조 효과로 해석하지 않는다(발표 슬라이드와 같은 판단: 모델·질문별 편차가 크다). 원인 분석은 별도 확인 필요.
 
 ### "맞는 매뉴얼 없음" 안내 (개선 1 보완) — 2026-10-20
 - 문제: 임계값 미만이면 runbook 없이 조용히 진행하고 사용자에게 알리지 않음(Spread 계획의 "맞는 매뉴얼 없음" 응답이 반쪽 구현).
@@ -231,7 +242,7 @@
 - 로컬 모델(qwen3) 응답이 느림, 수치 측정 시 OpenAI와 결과 차이 가능
 - 한국어 BM25는 조사/활용형 때문에 약함
 - 시스템 목록 기반 판단이라 신규 시스템 추가 시 monitoring.json 갱신 필요
-- 추가 개선 후보: Hybrid(BM25+Dense), 문단 단위 청킹, MCP 경유 runbook 로딩, Human-in-the-loop, Research 서브그래프 분리, LLM-as-judge 평가
+- 추가 개선 후보: Hybrid(BM25+Dense), 문단 단위 청킹, MCP 경유 runbook 로딩, Human-in-the-loop, LLM-as-judge 평가 (Research 서브그래프 분리는 `PIPELINE=multi`로 구현 완료)
 
 ---
 
@@ -244,7 +255,7 @@
 | 2026-10-20 | 설계 결정 | RAG는 runbook 선택 단계만 교체(replan_check_node). 새 파일 agent/rag.py + deps/server/graph 연결. 임베딩은 Ollama 임베딩 모델 예정 |
 | 2026-10-20 | runbook 4종 추가(ssl-cert-expiry, queue-backlog, bad-deploy, auth-failure) → 총 10종 | 오류 수정용이 아니라 RAG 시험 데이터 보강용(선택 항목). 선정 근거는 §4 아래 표 참고. `ls data/runbooks`로 10개 확인 필요 |
 | 2026-10-20 | 설계 결정 정리(아래 "설계 결정 기록" 참고) | 기존 규칙 방식을 검색 방식으로 교체, 규칙은 Before 비교용으로 남김 |
-| 2026-10-20 | 임베딩 모델 선정: `nomic-embed-text` (Ollama, 무료, 로컬) | `ollama pull nomic-embed-text` 완료. `ollama list`로 확인: nomic-embed-text:latest, 274 MB |
+| 2026-10-20 | 임베딩 모델 1차 선정: `nomic-embed-text` (Ollama, 무료, 로컬) | `ollama pull nomic-embed-text` 완료(274 MB). 같은 날 한국어 질문에서 약해 `bge-m3`로 교체(최종 채택, 위 "RAG 2차 시험" 참고) |
 | | | |
 
 ## 핵심 요약: 문제의 원인 코드 (처음 보는 사람용)
@@ -269,7 +280,7 @@ return "db-down"                                      # 하나도 안 맞으면 
 | 새로 추가한 runbook(ssl-cert-expiry 등) | 선택 불가 | 규칙 목록에 이름이 없음. 새 유형마다 사람이 키워드를 추가해야 함 |
 
 **개선**: 이 규칙을 의미 기반 검색(Dense, 임베딩)으로 교체한다. 질문과 알림을 함께 벡터로 바꿔 runbook 10개와 유사도를 비교하고, 충분히 비슷한 문서가 없으면 "맞는 매뉴얼 없음"으로 답한다.
-- 임베딩 모델: `nomic-embed-text` (Ollama, 무료, 로컬). 글을 "의미 숫자(벡터)"로 바꾸는 전용 모델로, 문장을 생성하지는 않는다. 다운로드 완료 확인(274 MB).
+- 임베딩 모델: **`bge-m3`** (Ollama, 무료, 로컬, 1.2GB). 글을 "의미 숫자(벡터)"로 바꾸는 전용 모델로, 문장을 생성하지는 않는다. (처음엔 `nomic-embed-text`를 골랐으나 한국어 질문에서 약해 교체함)
 - 기존 규칙은 삭제하지 않고 Before 비교용으로 남긴다.
 
 ## 설계 결정 기록
@@ -280,10 +291,10 @@ return "db-down"                                      # 하나도 안 맞으면 
 
 **개선 방식 (After)**
 - 문서를 찾는 단계를 의미 기반 검색(Dense, 임베딩 유사도)으로 교체. 입력은 "질문 + 알림". 임계값 미만이면 "맞는 매뉴얼 없음".
-- 임베딩 모델: `nomic-embed-text`(Ollama). 문서와 질문을 같은 모델로 벡터화해 코사인 유사도로 비교. 문서 10개라 별도 벡터 DB 없이 인메모리 저장.
+- 임베딩 모델: `bge-m3`(Ollama, 최종 채택. 처음 `nomic-embed-text`에서 교체). 문서와 질문을 같은 모델로 벡터화해 코사인 유사도로 비교. 문서 10개라 별도 벡터 DB 없이 인메모리 저장.
 - BM25는 임베딩 모델이 필요 없고 단어 겹침 점수로 계산 → **선택(비교용)**. Hybrid(BM25+Dense)는 문서가 많아질 때의 추가 개선으로 언급.
 - `_INCIDENT_TYPE_RULES`는 삭제하지 않고 Before 방식으로 남겨, 방식(rules | bm25 | dense)을 바꿔가며 같은 질문 세트로 정확도·지연시간 비교(DI 활용).
-- 한국어 임베딩 약점 가능성: 정확도가 낮으면 다국어 모델(`bge-m3`)과 비교하고 결과를 한계에 기록.
+- 한국어 임베딩 약점: nomic에서 실제로 확인되어 다국어 모델 `bge-m3`로 교체함(같은 6문항 비교는 "RAG 2차 시험" 참고). 대신 모델이 1.2GB로 무거움.
 
 ## 변경 파일 목록 (내가 만들거나 고친 것 — 원본과 구분하기 위함)
 | 파일 | 구분 | 내용 | 상태 |
@@ -300,3 +311,23 @@ return "db-down"                                      # 하나도 안 맞으면 
 - 임베딩: 글을 의미를 담은 숫자 목록(벡터)으로 바꾼 것. 숫자가 가까우면 의미가 비슷함
 - MCP: AI가 외부 도구/자료에 접근하는 표준 방식 (Tool=조회, Resource=문서, Prompt=절차)
 - 의존성 주입: 노드가 필요한 도구(AI, MCP 등)를 직접 만들지 않고 `deps`로 받아 쓰게 하는 구조 → 테스트 시 가짜로 교체 가능
+
+
+---
+
+## 추가 실험 — 총괄이 부를 에이전트를 AI로 고르게 하기 (브랜치 `agents-reasoning`)
+
+**동기**: 에이전트 3개(metrics·log·runbook)가 AI의 판단 없이 정해진 도구를 호출할 뿐이라 "에이전트"라고 부르기에 약하다는 지적.
+**변경**: 조사 총괄 서브그래프에 `decide` 노드 추가. fast 모델이 질문을 보고 metrics/log/runbook 중 필요한 것만 고르고, 고르지 않은 에이전트는 생략한다. 안전장치: 형식 오류 시 규칙으로 대체, metrics 항상 포함, 장애 질문에서 runbook 제거 불가. 단위 테스트 41 → 54개.
+
+| 지표 | qwen3:0.6b (예시 없음) | qwen3:0.6b (예시 2개) | gpt-4o-mini | 코드 규칙만 |
+|---|---|---|---|---|
+| 현황 질문에서 metrics만 고름 (8개) | 0/8 | 3/8 | 3/8 | 3/8 |
+| 장애 질문에서 세 에이전트를 모두 고름 (18개) | 18/18 | 17/18 | 16/18 | 18/18 |
+| 판단 1회 지연 | 약 1.4초 | 약 1.2초 | 약 1.0초 | 0ms |
+
+- 매뉴얼 선택 정확도: 17/21 → 17/21 (동일). 조사 단계 시간: 약 50ms → 약 1.5초 (Ollama, 판단 호출 때문).
+- MCP 호출 수는 변화 없음 — 평가 질문 21개가 전부 장애 질문이라 총괄이 매번 전부 불렀다.
+- **결론**: AI 판단이 규칙보다 나은 근거를 얻지 못했고 지연만 늘어 main에는 합치지 않았다. 작은 모델은 예시가 없으면 항상 전부 고르고, 큰 모델도 현황 질문에서 규칙과 같았다.
+- 한계: 현황 질문 8개는 직접 쓴 소표본, 기대 답도 작성자가 정함, 질문당 1회 측정.
+- 재현: `.venv/bin/python eval/decision_eval.py [ollama|openai]` (브랜치에서). 결과: `eval/results_decision_ollama.json`, `eval/results_decision_openai.json`.

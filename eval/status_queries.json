@@ -1,0 +1,10 @@
+[
+  {"id": 101, "query": "web-01 지금 상태 어때?"},
+  {"id": 102, "query": "payments-service CPU 사용률 얼마야?"},
+  {"id": 103, "query": "cache-service 메모리 지금 얼마나 쓰고 있어?"},
+  {"id": 104, "query": "gateway-service 헬스 체크 한번 해줘"},
+  {"id": 105, "query": "log-service 디스크 사용량 확인해줘"},
+  {"id": 106, "query": "auth-service 지금 정상이야?"},
+  {"id": 107, "query": "web-01 CPU랑 메모리 수치만 알려줘"},
+  {"id": 108, "query": "cache-service에 걸려 있는 알림이 있는지 확인해줘"}
+]

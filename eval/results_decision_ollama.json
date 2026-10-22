@@ -1,0 +1,331 @@
+[
+  {
+    "kind": "status",
+    "id": 101,
+    "query": "web-01 지금 상태 어때?",
+    "agents": [
+      "metrics"
+    ],
+    "source": "llm",
+    "reason": "the question is straightforward and asks for the current status of web-01, so on",
+    "ms": 809
+  },
+  {
+    "kind": "status",
+    "id": 102,
+    "query": "payments-service CPU 사용률 얼마야?",
+    "agents": [
+      "metrics"
+    ],
+    "source": "llm",
+    "reason": "metrics=시스템 수치·알림 조회",
+    "ms": 827
+  },
+  {
+    "kind": "status",
+    "id": 103,
+    "query": "cache-service 메모리 지금 얼마나 쓰고 있어?",
+    "agents": [
+      "metrics"
+    ],
+    "source": "llm",
+    "reason": "the question asks for a number, so metrics is the correct agent.",
+    "ms": 673
+  },
+  {
+    "kind": "status",
+    "id": 104,
+    "query": "gateway-service 헬스 체크 한번 해줘",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "To assess the gateway-service's health, we need to check metrics for performance",
+    "ms": 1126
+  },
+  {
+    "kind": "status",
+    "id": 105,
+    "query": "log-service 디스크 사용량 확인해줘",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "disk usage is a system metric, so metrics are needed. The log service's current ",
+    "ms": 1184
+  },
+  {
+    "kind": "status",
+    "id": 106,
+    "query": "auth-service 지금 정상이야?",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "the user is asking for confirmation about the status of the auth-service, which ",
+    "ms": 1330
+  },
+  {
+    "kind": "status",
+    "id": 107,
+    "query": "web-01 CPU랑 메모리 수치만 알려줘",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "metrics=시스템 수치·알림 조회",
+    "ms": 682
+  },
+  {
+    "kind": "status",
+    "id": 108,
+    "query": "cache-service에 걸려 있는 알림이 있는지 확인해줘",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "metrics=시스템 수치·알림 조회",
+    "ms": 1235
+  },
+  {
+    "kind": "trouble",
+    "id": 1,
+    "query": "payments-service 결제 응답이 느려지고 CPU가 치솟았어요, 원인 확인해주세요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The issue is likely due to slow response times or increased CPU usage. To diagno",
+    "ms": 1235
+  },
+  {
+    "kind": "trouble",
+    "id": 2,
+    "query": "gateway-service에서 payments-service로 가는 요청이 타임아웃 나고 있어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The timeout issue indicates a problem with the payment service. Metrics can show",
+    "ms": 1222
+  },
+  {
+    "kind": "trouble",
+    "id": 3,
+    "query": "web-01 CPU 급증 원인 진단해줘",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The user is asking for an investigation into the web-01 CPU growth. To determine",
+    "ms": 1337
+  },
+  {
+    "kind": "trouble",
+    "id": 4,
+    "query": "cache-service 메모리 사용률이 계속 올라가고 있어요",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The user is concerned about rising memory usage in the cache-service. The metric",
+    "ms": 1252
+  },
+  {
+    "kind": "trouble",
+    "id": 5,
+    "query": "log-service 디스크 공간이 부족하다는 알림이 왔어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The issue is related to the log service's disk space. We need to check the log m",
+    "ms": 850
+  },
+  {
+    "kind": "trouble",
+    "id": 6,
+    "query": "auth-service 로그인 응답이 느려졌어요. 원인 확인해주세요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "To identify the cause of the slow response time on the auth-service log, we need",
+    "ms": 896
+  },
+  {
+    "kind": "trouble",
+    "id": 7,
+    "query": "로그인 응답이 느려요, 원인 확인해주세요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "To identify the cause of the slow login response, we need to check system metric",
+    "ms": 1227
+  },
+  {
+    "kind": "trouble",
+    "id": 8,
+    "query": "cache-service 힙이 한계에 가깝다는 알림이 떴어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The issue is related to the cache-service approaching its limit. Metrics provide",
+    "ms": 1083
+  },
+  {
+    "kind": "trouble",
+    "id": 9,
+    "query": "gateway-service에서 504 오류가 계속 나요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The issue is with the gateway service, so checking metrics for performance, logs",
+    "ms": 2056
+  },
+  {
+    "kind": "trouble",
+    "id": 10,
+    "query": "payments-service 인스턴스 하나가 유독 느려요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The user is reporting a slow payments-service instance. To address this, I need ",
+    "ms": 1149
+  },
+  {
+    "kind": "trouble",
+    "id": 11,
+    "query": "데이터베이스가 응답을 안 해요, DB가 다운된 것 같아요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The user is experiencing a database issue and a possible system downtime. To add",
+    "ms": 1536
+  },
+  {
+    "kind": "trouble",
+    "id": 12,
+    "query": "auth-service 배포 직후부터 에러가 폭증했어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The surge in errors indicates a potential issue with the system. Metrics can sho",
+    "ms": 1347
+  },
+  {
+    "kind": "trouble",
+    "id": 13,
+    "query": "인증서가 만료됐다는 경고가 떴어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The warning about the certificate expiring indicates a potential issue. Metrics ",
+    "ms": 1129
+  },
+  {
+    "kind": "trouble",
+    "id": 14,
+    "query": "payments-service 큐에 메시지가 계속 쌓여요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The queue being full indicates potential high load. Metrics like queue length or",
+    "ms": 1244
+  },
+  {
+    "kind": "trouble",
+    "id": 15,
+    "query": "로그인이 안 돼요, 401 에러가 급증해요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "Check for authentication issues and backend errors to identify the root cause of",
+    "ms": 1918
+  },
+  {
+    "kind": "trouble",
+    "id": 16,
+    "query": "web-01에 새 버전을 배포했더니 서비스가 안 돼요, 롤백해야 할까요?",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "To determine if a rollback is necessary, check the service's current status (met",
+    "ms": 1299
+  },
+  {
+    "kind": "trouble",
+    "id": 17,
+    "query": "서버가 버벅거려요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The user is experiencing a server issue, so checking metrics to understand curre",
+    "ms": 1058
+  },
+  {
+    "kind": "trouble",
+    "id": 20,
+    "query": "payments-service랑 billing-service 둘 다 응답이 느려요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "The user is experiencing issues with both services, so it's important to check m",
+    "ms": 919
+  }
+]
