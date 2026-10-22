@@ -1,0 +1,327 @@
+[
+  {
+    "kind": "status",
+    "id": 101,
+    "query": "web-01 지금 상태 어때?",
+    "agents": [
+      "metrics"
+    ],
+    "source": "llm",
+    "reason": "현재 상태 수치만 요청",
+    "ms": 1078
+  },
+  {
+    "kind": "status",
+    "id": 102,
+    "query": "payments-service CPU 사용률 얼마야?",
+    "agents": [
+      "metrics"
+    ],
+    "source": "llm",
+    "reason": "수치만 요청",
+    "ms": 870
+  },
+  {
+    "kind": "status",
+    "id": 103,
+    "query": "cache-service 메모리 지금 얼마나 쓰고 있어?",
+    "agents": [
+      "metrics"
+    ],
+    "source": "llm",
+    "reason": "현재 메모리 사용량 수치만 요청",
+    "ms": 958
+  },
+  {
+    "kind": "status",
+    "id": 104,
+    "query": "gateway-service 헬스 체크 한번 해줘",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "현재 상태 수치만 요청",
+    "ms": 1076
+  },
+  {
+    "kind": "status",
+    "id": 105,
+    "query": "log-service 디스크 사용량 확인해줘",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "디스크 사용량 수치만 요청",
+    "ms": 861
+  },
+  {
+    "kind": "status",
+    "id": 106,
+    "query": "auth-service 지금 정상이야?",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "현재 상태만 묻고 있으므로 시스템 수치 조회만 필요함.",
+    "ms": 876
+  },
+  {
+    "kind": "status",
+    "id": 107,
+    "query": "web-01 CPU랑 메모리 수치만 알려줘",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "수치만 요청",
+    "ms": 755
+  },
+  {
+    "kind": "status",
+    "id": 108,
+    "query": "cache-service에 걸려 있는 알림이 있는지 확인해줘",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "현재 상태·수치만 묻는 질문이므로 알림 조회만 필요함.",
+    "ms": 1203
+  },
+  {
+    "kind": "trouble",
+    "id": 1,
+    "query": "payments-service 결제 응답이 느려지고 CPU가 치솟았어요, 원인 확인해주세요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "응답 지연과 CPU 상승 원인 진단을 위해 수치, 로그, 대응 매뉴얼이 필요합니다.",
+    "ms": 1125
+  },
+  {
+    "kind": "trouble",
+    "id": 2,
+    "query": "gateway-service에서 payments-service로 가는 요청이 타임아웃 나고 있어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "타임아웃 원인 진단 및 대응 방법을 확인해야 함.",
+    "ms": 1058
+  },
+  {
+    "kind": "trouble",
+    "id": 3,
+    "query": "web-01 CPU 급증 원인 진단해줘",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "CPU 급증의 원인을 진단하기 위해 수치, 로그, 대응 매뉴얼이 필요함.",
+    "ms": 1102
+  },
+  {
+    "kind": "trouble",
+    "id": 4,
+    "query": "cache-service 메모리 사용률이 계속 올라가고 있어요",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "현재 상태 수치만 요청",
+    "ms": 1269
+  },
+  {
+    "kind": "trouble",
+    "id": 5,
+    "query": "log-service 디스크 공간이 부족하다는 알림이 왔어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "장애 원인 진단 및 대응 방법을 알아보기 위해 필요함.",
+    "ms": 1370
+  },
+  {
+    "kind": "trouble",
+    "id": 6,
+    "query": "auth-service 로그인 응답이 느려졌어요. 원인 확인해주세요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "응답 지연의 원인을 진단하기 위해 수치, 로그, 대응 매뉴얼이 필요함.",
+    "ms": 1189
+  },
+  {
+    "kind": "trouble",
+    "id": 7,
+    "query": "로그인 응답이 느려요, 원인 확인해주세요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "응답 지연의 원인 진단을 위해 수치, 로그, 대응 매뉴얼이 필요함.",
+    "ms": 1076
+  },
+  {
+    "kind": "trouble",
+    "id": 8,
+    "query": "cache-service 힙이 한계에 가깝다는 알림이 떴어요",
+    "agents": [
+      "metrics",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "현재 상태 수치만 요청됨",
+    "ms": 852
+  },
+  {
+    "kind": "trouble",
+    "id": 9,
+    "query": "gateway-service에서 504 오류가 계속 나요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "장애 원인 진단 및 대응 방법을 요청함.",
+    "ms": 829
+  },
+  {
+    "kind": "trouble",
+    "id": 10,
+    "query": "payments-service 인스턴스 하나가 유독 느려요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "느린 원인 진단과 대응 방법을 알아보기 위해 수치, 로그, 대응 매뉴얼이 필요함.",
+    "ms": 1374
+  },
+  {
+    "kind": "trouble",
+    "id": 11,
+    "query": "데이터베이스가 응답을 안 해요, DB가 다운된 것 같아요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "장애 원인 진단 및 대응 방법을 요청함.",
+    "ms": 973
+  },
+  {
+    "kind": "trouble",
+    "id": 12,
+    "query": "auth-service 배포 직후부터 에러가 폭증했어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "배포 후 에러 폭증에 대한 원인 진단과 대응 방법을 확인해야 함.",
+    "ms": 931
+  },
+  {
+    "kind": "trouble",
+    "id": 13,
+    "query": "인증서가 만료됐다는 경고가 떴어요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "인증서 만료 경고는 원인 진단과 대응 방법이 필요함.",
+    "ms": 1116
+  },
+  {
+    "kind": "trouble",
+    "id": 14,
+    "query": "payments-service 큐에 메시지가 계속 쌓여요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "큐에 메시지가 쌓이는 원인 진단과 대응 방법을 알아야 함.",
+    "ms": 981
+  },
+  {
+    "kind": "trouble",
+    "id": 15,
+    "query": "로그인이 안 돼요, 401 에러가 급증해요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "장애 원인 진단 및 대응 방법 요청",
+    "ms": 791
+  },
+  {
+    "kind": "trouble",
+    "id": 16,
+    "query": "web-01에 새 버전을 배포했더니 서비스가 안 돼요, 롤백해야 할까요?",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "서비스 중단 원인 진단과 대응 방법을 모두 확인해야 함.",
+    "ms": 947
+  },
+  {
+    "kind": "trouble",
+    "id": 17,
+    "query": "서버가 버벅거려요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "서버 성능 문제의 원인 진단과 대응 방법을 알아보기 위해 필요함.",
+    "ms": 1061
+  },
+  {
+    "kind": "trouble",
+    "id": 20,
+    "query": "payments-service랑 billing-service 둘 다 응답이 느려요",
+    "agents": [
+      "metrics",
+      "log",
+      "runbook"
+    ],
+    "source": "llm",
+    "reason": "응답 지연 원인 진단 및 대응 방법을 요청함.",
+    "ms": 1181
+  }
+]
