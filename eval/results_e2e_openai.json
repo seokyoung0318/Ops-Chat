@@ -1,0 +1,272 @@
+[
+  {
+    "id": 1,
+    "query": "payments-service 결제 응답이 느려지고 CPU가 치솟았어요, 원인 확인해주세요",
+    "group": "기존 유형",
+    "single": {
+      "seconds": 5.59,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 1,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.002906,
+      "runbook": "cpu-spike",
+      "log_collected": false,
+      "final_len": 409
+    },
+    "multi": {
+      "seconds": 4.84,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003586,
+      "runbook": "cpu-spike",
+      "log_collected": true,
+      "final_len": 627
+    }
+  },
+  {
+    "id": 3,
+    "query": "web-01 CPU 급증 원인 진단해줘",
+    "group": "기존 유형",
+    "single": {
+      "seconds": 4.59,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 1,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.002482,
+      "runbook": "cpu-spike",
+      "log_collected": false,
+      "final_len": 291
+    },
+    "multi": {
+      "seconds": 3.39,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.002592,
+      "runbook": "cpu-spike",
+      "log_collected": true,
+      "final_len": 312
+    }
+  },
+  {
+    "id": 4,
+    "query": "cache-service 메모리 사용률이 계속 올라가고 있어요",
+    "group": "기존 유형",
+    "single": {
+      "seconds": 6.29,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 1,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003347,
+      "runbook": "memory-leak",
+      "log_collected": false,
+      "final_len": 517
+    },
+    "multi": {
+      "seconds": 5.01,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003522,
+      "runbook": "memory-leak",
+      "log_collected": true,
+      "final_len": 495
+    }
+  },
+  {
+    "id": 6,
+    "query": "auth-service 로그인 응답이 느려졌어요. 원인 확인해주세요",
+    "group": "기존 유형",
+    "single": {
+      "seconds": 4.9,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 1,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003457,
+      "runbook": "high-latency",
+      "log_collected": false,
+      "final_len": 509
+    },
+    "multi": {
+      "seconds": 4.18,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003787,
+      "runbook": "high-latency",
+      "log_collected": true,
+      "final_len": 581
+    }
+  },
+  {
+    "id": 9,
+    "query": "gateway-service에서 504 오류가 계속 나요",
+    "group": "기존 유형",
+    "single": {
+      "seconds": 5.74,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 1,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003601,
+      "runbook": "high-latency",
+      "log_collected": false,
+      "final_len": 680
+    },
+    "multi": {
+      "seconds": 4.78,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003846,
+      "runbook": "high-latency",
+      "log_collected": true,
+      "final_len": 750
+    }
+  },
+  {
+    "id": 13,
+    "query": "인증서가 만료됐다는 경고가 떴어요",
+    "group": "새 runbook",
+    "single": {
+      "seconds": 4.76,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 1,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003332,
+      "runbook": "ssl-cert-expiry",
+      "log_collected": false,
+      "final_len": 524
+    },
+    "multi": {
+      "seconds": 4.02,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003362,
+      "runbook": "ssl-cert-expiry",
+      "log_collected": true,
+      "final_len": 431
+    }
+  },
+  {
+    "id": 14,
+    "query": "payments-service 큐에 메시지가 계속 쌓여요",
+    "group": "새 runbook",
+    "single": {
+      "seconds": 4.71,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 1,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003421,
+      "runbook": "queue-backlog",
+      "log_collected": false,
+      "final_len": 573
+    },
+    "multi": {
+      "seconds": 4.58,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.004001,
+      "runbook": "queue-backlog",
+      "log_collected": true,
+      "final_len": 752
+    }
+  },
+  {
+    "id": 16,
+    "query": "web-01에 새 버전을 배포했더니 서비스가 안 돼요, 롤백해야 할까요?",
+    "group": "새 runbook",
+    "single": {
+      "seconds": 4.99,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 1,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.003223,
+      "runbook": "bad-deploy",
+      "log_collected": false,
+      "final_len": 503
+    },
+    "multi": {
+      "seconds": 4.4,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.002958,
+      "runbook": "bad-deploy",
+      "log_collected": true,
+      "final_len": 390
+    }
+  },
+  {
+    "id": 18,
+    "query": "billing-service 응답이 느려요",
+    "group": "모르는 시스템",
+    "single": {
+      "seconds": 0.83,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 0,
+      "cost_usd_est": 2.1e-05,
+      "runbook": "none",
+      "log_collected": false,
+      "final_len": 168
+    },
+    "multi": {
+      "seconds": 0.93,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 0,
+      "cost_usd_est": 2.1e-05,
+      "runbook": "none",
+      "log_collected": false,
+      "final_len": 168
+    }
+  },
+  {
+    "id": 21,
+    "query": "사무실 프린터가 인쇄가 안 돼요",
+    "group": "범위 밖",
+    "single": {
+      "seconds": 4.25,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.001972,
+      "runbook": "none",
+      "log_collected": false,
+      "final_len": 465
+    },
+    "multi": {
+      "seconds": 3.8,
+      "route": "incident",
+      "retry_count": 0,
+      "replan_rounds": 0,
+      "validation_attempts": 1,
+      "cost_usd_est": 0.002427,
+      "runbook": "none",
+      "log_collected": true,
+      "final_len": 580
+    }
+  }
+]
